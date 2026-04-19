@@ -35,9 +35,17 @@ export function processImageUrl(originalUrl: string): string {
   if (!originalUrl) return originalUrl;
 
   const proxyUrl = getImageProxyUrl();
-  if (!proxyUrl) return originalUrl;
+  
+  if (proxyUrl) {
+    return `${proxyUrl}${encodeURIComponent(originalUrl)}`;
+  }
 
-  return `${proxyUrl}${encodeURIComponent(originalUrl)}`;
+  // 核心修復：如果沒有設定代理且是豆瓣圖片，自動使用強力代理 wsrv.nl
+  if (originalUrl.includes('doubanio.com')) {
+    return `https://wsrv.nl/?url=${encodeURIComponent(originalUrl)}`;
+  }
+
+  return originalUrl;
 }
 
 export function cleanHtmlTags(text: string): string {
