@@ -40,9 +40,10 @@ export function processImageUrl(originalUrl: string): string {
     return `${proxyUrl}${encodeURIComponent(originalUrl)}`;
   }
 
-  // 核心修復：如果沒有設定代理且是豆瓣圖片，自動使用強力代理 wsrv.nl
+  // 核心修復：如果沒有設定代理且是豆瓣圖片，自動使用更穩定的 WordPress 圖片鏡像
   if (originalUrl.includes('doubanio.com')) {
-    return `https://wsrv.nl/?url=${encodeURIComponent(originalUrl)}`;
+    const cleanUrl = originalUrl.replace('https://', '').replace('http://', '');
+    return `https://i0.wp.com/${cleanUrl}`;
   }
 
   return originalUrl;
