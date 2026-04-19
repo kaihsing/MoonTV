@@ -277,13 +277,23 @@ export default function VideoCard({
         {/* 骨架屏 */}
         {!isLoading && <ImagePlaceholder aspectRatio='aspect-[2/3]' />}
         {/* 图片 */}
-        <Image
+        <img
           src={processImageUrl(actualPoster)}
           alt={actualTitle}
-          fill
-          className='object-cover'
+          className='object-cover w-full h-full'
           referrerPolicy='no-referrer'
-          onLoadingComplete={() => setIsLoading(true)}
+          onLoad={() => setIsLoading(true)}
+          onError={(e) => {
+            const target = e.currentTarget;
+            const originalUrl = processImageUrl(actualPoster);
+            // 如果直連失敗且是豆瓣圖片，回退到內部代理
+            if (originalUrl.includes('doubanio.com') && !target.src.includes('/api/image-proxy')) {
+              target.src = `/api/image-proxy?url=${encodeURIComponent(originalUrl)}`;
+            } else {
+              // 最終還是失敗則顯示佔位圖
+              setIsLoading(true);
+            }
+          }}
         />
 
         {/* 悬浮遮罩 */}

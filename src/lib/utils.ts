@@ -40,12 +40,8 @@ export function processImageUrl(originalUrl: string): string {
     return `${proxyUrl}${encodeURIComponent(originalUrl)}`;
   }
 
-  // 核心修復：如果沒有設定代理且是豆瓣圖片，自動使用更穩定的 WordPress 圖片鏡像
-  if (originalUrl.includes('doubanio.com')) {
-    const cleanUrl = originalUrl.replace('https://', '').replace('http://', '');
-    return `https://i0.wp.com/${cleanUrl}`;
-  }
-
+  // 核心修復：如果沒有設定代理，優先返回原始網址 (依賴 no-referrer meta)
+  // 如果是豆瓣圖片，VideoCard 會有 onerror 回退到內部代理邏輯
   return originalUrl;
 }
 
